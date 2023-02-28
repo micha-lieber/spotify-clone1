@@ -1,14 +1,25 @@
 import React, { useContext } from "react";
-import "./Navbar.scss";
 import { ThemeContext } from "../context/ThemeContext";
+import { NavLink } from "react-router-dom";
+import { AuthContext } from "../context/authContext";
 
 export default function Navbar() {
   const { textColor } = useContext(ThemeContext);
-  const navElStyle = "navLink flex flex-row justify-start items-center gap-5";
+  const { user } = useContext(AuthContext);
+  const navElStyle =
+    "navLink flex flex-none flex-row flex-wrap-nowrap justify-start items-center gap-5 hover:text-white cursor-pointer relative";
+
+  /**makes modal for navbuttons appear and disappear*/
+  const clickHandler = (e) => {
+    e.preventDefault();
+    let modal = e.currentTarget.lastChild;
+    modal.classList.remove("hidden");
+    setTimeout(() => modal.classList.add("hidden"), 2000);
+  };
   return (
     <div className="navContainer p-4 bg-black w-[200px] h-[100%] flex flex-col justify-between">
       <div className="navTop  flex flex-col gap-4">
-        <div className="logo my-4">
+        <NavLink className="logo my-4" to="/">
           <svg viewBox="0 0 1134 340">
             <title>Spotify</title>
             <path
@@ -17,8 +28,8 @@ export default function Navbar() {
             ></path>
           </svg>
           <p className="float-right">This is a CLONE</p>
-        </div>
-        <div className={navElStyle} to="/">
+        </NavLink>
+        <NavLink className={navElStyle} to="/">
           <svg
             role="img"
             height="24"
@@ -33,8 +44,8 @@ export default function Navbar() {
             ></path>
           </svg>
           <span> Home</span>
-        </div>
-        <div className={navElStyle} to="/search">
+        </NavLink>
+        <NavLink className={navElStyle} to="/search">
           <svg
             role="img"
             height="24"
@@ -49,8 +60,14 @@ export default function Navbar() {
             ></path>
           </svg>
           <span> Search</span>
-        </div>
-        <div className={navElStyle} to="/collection/playlists">
+        </NavLink>
+        <div
+          className={navElStyle}
+          to="/collection/playlists"
+          onClick={(e) => {
+            clickHandler(e);
+          }}
+        >
           <svg
             role="img"
             height="24"
@@ -66,8 +83,21 @@ export default function Navbar() {
           </svg>
 
           <span> Your Library</span>
+          <div className="absolute bg-emerald-500 h-[50px] w-[200px] left-full rounded-md text-white hidden">
+            <p>
+              {user
+                ? "This feature will be available soon"
+                : "Log in to access this feature!"}
+            </p>
+          </div>
         </div>
-        <button className={navElStyle} to="/playlist/id">
+        <button
+          className={navElStyle}
+          to="/playlist/id"
+          onClick={(e) => {
+            clickHandler(e);
+          }}
+        >
           <svg
             role="img"
             height="24"
@@ -83,8 +113,15 @@ export default function Navbar() {
           </svg>
 
           <span> Create Playlist</span>
+          <div className="absolute bg-emerald-500 h-[50px] w-[200px] left-full rounded-md text-white hidden">
+            <p>
+              {user
+                ? "This feature will be available soon"
+                : "Log in to access this feature!"}
+            </p>
+          </div>
         </button>
-        <div className={navElStyle} to="/collection/tracks">
+        <NavLink className={navElStyle} to="/liked">
           <svg
             role="img"
             height="24"
@@ -92,7 +129,6 @@ export default function Navbar() {
             aria-hidden="true"
             viewBox="0 0 24 24"
             data-encore-id="icon"
-            class="Svg-sc-ytk21e-0 uPxdw"
           >
             <path
               fill={textColor}
@@ -101,7 +137,7 @@ export default function Navbar() {
           </svg>
 
           <span> Liked Songs</span>
-        </div>
+        </NavLink>
       </div>
       <div className="navBottom text-sm flex flex-col gap-1">
         <span>Legal</span>

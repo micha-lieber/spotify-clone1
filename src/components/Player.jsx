@@ -1,38 +1,126 @@
-import React, { useContext } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { ThemeContext } from "../context/ThemeContext";
-import placeholderImg from "../assets/placeholder.jpeg";
+
 export default function Player() {
-  const { textColor } = useContext(ThemeContext);
+  const { textColor, song, playing, setPlaying, setLiked } =
+    useContext(ThemeContext);
+  const [time, setTime] = useState("0:00");
+  const [progVal, setProgVal] = useState(0);
+  const [heartColor, setHeartColor] = useState(null);
+  const [volume, setVolume] = useState(60);
+  const [repeating, setRepeating] = useState(false);
+  const audplayer = useRef(0);
+  const progressBar = useRef(0);
+  const playAnimationRef = useRef();
+
+  /* adds zeroes to the Time*/
+  const timerZeros = () => {
+    let timer;
+    if (Math.ceil(audplayer.current.currentTime) < 10) {
+      timer = "0:0" + Math.ceil(audplayer.current.currentTime);
+    } else {
+      timer = "0:" + Math.ceil(audplayer.current.currentTime);
+    }
+    return timer;
+  };
+
+  /*updates ProgressBar in Player*/
+  const repeat = useCallback(() => {
+    setProgVal(Math.ceil(audplayer.current.currentTime));
+    setTime(timerZeros());
+    playAnimationRef.current = requestAnimationFrame(repeat);
+  }, []);
+
+  // Plays or pauses song
+  useEffect(() => {
+    if (!playing) {
+      audplayer.current.play();
+    } else {
+      audplayer.current.pause();
+    }
+    playAnimationRef.current = requestAnimationFrame(repeat);
+  }, [playing, audplayer, repeat, song]);
+
+  // resets color of heart on songchange
+  useEffect(() => {
+    setHeartColor(null);
+  }, [song]);
+
+  /*adds liked Songs to Favourites and turns hearts color red*/
+  const likeHandler = (e) => {
+    if (heartColor) {
+      setHeartColor(null);
+    } else {
+      setHeartColor("red");
+      setLiked((prevLiked) => [...prevLiked, song]);
+      console.log("song liked");
+    }
+  };
+  // changes Volume according to input by user
+  useEffect(() => {
+    audplayer.current.volume = volume / 100;
+  }, [volume, audplayer]);
+
+  /** sets the player to loop */
+  const handleRepeat = (e) => {
+    setRepeating(!repeating);
+    audplayer.current.loop = !audplayer.current.loop;
+    console.log("handlerepeat fired");
+  };
 
   return (
     <div className="h-[10%] bg-slate-800 flex justify-between p-10 ">
+      {/* audio element */}
+      <audio
+        src={song?.preview}
+        ref={audplayer}
+        onEnded={() => {
+          console.log("song ended");
+          setPlaying(!playing);
+        }}
+      ></audio>
+
+      {/* player left elements */}
       <div className="playerLeft flex justify-center items-center gap-5">
+        {/* album cover */}
         <div>
-          <img src={placeholderImg} alt="" />
+          <img src={song?.album.cover_small} alt="" />
         </div>
+        {/* title and artistname */}
         <div className="titleAndArtist">
-          <h5 className="text-base font-bold">longertitle</h5>
-          <p className="text-sm">reallylongartistname</p>
+          <h5 className="text-base font-bold">{song?.title}</h5>
+          <p className="text-sm">{song?.artist.name}</p>
         </div>
-        <button>
+        {/* Heart for likes */}
+        <button
+          onClick={(e) => {
+            likeHandler(e);
+          }}
+        >
           <svg
             role="img"
             height="16"
             width="16"
             aria-hidden="true"
             viewBox="0 0 16 16"
-            data-encore-id="icon"
-            class="Svg-sc-ytk21e-0 uPxdw"
           >
             <path
-              fill={textColor}
+              fill={heartColor ? heartColor : textColor}
               d="M1.69 2A4.582 4.582 0 0 1 8 2.023 4.583 4.583 0 0 1 11.88.817h.002a4.618 4.618 0 0 1 3.782 3.65v.003a4.543 4.543 0 0 1-1.011 3.84L9.35 14.629a1.765 1.765 0 0 1-2.093.464 1.762 1.762 0 0 1-.605-.463L1.348 8.309A4.582 4.582 0 0 1 1.689 2zm3.158.252A3.082 3.082 0 0 0 2.49 7.337l.005.005L7.8 13.664a.264.264 0 0 0 .311.069.262.262 0 0 0 .09-.069l5.312-6.33a3.043 3.043 0 0 0 .68-2.573 3.118 3.118 0 0 0-2.551-2.463 3.079 3.079 0 0 0-2.612.816l-.007.007a1.501 1.501 0 0 1-2.045 0l-.009-.008a3.082 3.082 0 0 0-2.121-.861z"
             ></path>
           </svg>
         </button>
       </div>
       <div className="playermiddle flex flex-col justify-center gap-2 w-[40%]">
+        {/* Controls */}
         <div className="controls flex justify-center items-center gap-3">
+          {/* Shuffle button */}
           <div>
             <svg
               role="img"
@@ -41,7 +129,6 @@ export default function Player() {
               aria-hidden="true"
               viewBox="0 0 16 16"
               data-encore-id="icon"
-              class="Svg-sc-ytk21e-0 uPxdw"
             >
               <path
                 fill={textColor}
@@ -53,6 +140,7 @@ export default function Player() {
               ></path>
             </svg>
           </div>
+          {/* backwards button */}
           <div>
             <svg
               role="img"
@@ -61,7 +149,6 @@ export default function Player() {
               aria-hidden="true"
               viewBox="0 0 16 16"
               data-encore-id="icon"
-              class="Svg-sc-ytk21e-0 uPxdw"
             >
               <path
                 fill={textColor}
@@ -69,22 +156,45 @@ export default function Player() {
               ></path>
             </svg>
           </div>
-          <div className="rounded-full bg-white p-3">
-            <svg
-              role="img"
-              height="16"
-              width="16"
-              aria-hidden="true"
-              viewBox="0 0 16 16"
-              data-encore-id="icon"
-              class="Svg-sc-ytk21e-0 uPxdw"
-            >
-              <path
-                fill="black"
-                d="M3 1.713a.7.7 0 0 1 1.05-.607l10.89 6.288a.7.7 0 0 1 0 1.212L4.05 14.894A.7.7 0 0 1 3 14.288V1.713z"
-              ></path>
-            </svg>
+          {/* Play / Pause Button */}
+          <div
+            className="rounded-full bg-white p-3"
+            onClick={() => {
+              setPlaying(!playing);
+            }}
+          >
+            {playing && (
+              <svg
+                role="img"
+                height="16"
+                width="16"
+                aria-hidden="true"
+                viewBox="0 0 16 16"
+                data-encore-id="icon"
+              >
+                <path
+                  fill="black"
+                  d="M3 1.713a.7.7 0 0 1 1.05-.607l10.89 6.288a.7.7 0 0 1 0 1.212L4.05 14.894A.7.7 0 0 1 3 14.288V1.713z"
+                ></path>
+              </svg>
+            )}
+            {!playing && (
+              <svg
+                role="img"
+                height="16"
+                width="16"
+                aria-hidden="true"
+                viewBox="0 0 16 16"
+                data-encore-id="icon"
+              >
+                <path
+                  fill="black"
+                  d="M2.7 1a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7H2.7zm8 0a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-2.6z"
+                ></path>
+              </svg>
+            )}
           </div>
+          {/* forward button */}
           <div>
             <svg
               role="img"
@@ -93,7 +203,6 @@ export default function Player() {
               aria-hidden="true"
               viewBox="0 0 16 16"
               data-encore-id="icon"
-              class="Svg-sc-ytk21e-0 uPxdw"
             >
               <path
                 fill={textColor}
@@ -101,7 +210,12 @@ export default function Player() {
               ></path>
             </svg>
           </div>
-          <div>
+          {/* repeat button */}
+          <div
+            onClick={(e) => {
+              handleRepeat(e);
+            }}
+          >
             <svg
               role="img"
               height="16"
@@ -109,21 +223,29 @@ export default function Player() {
               aria-hidden="true"
               viewBox="0 0 16 16"
               data-encore-id="icon"
-              class="Svg-sc-ytk21e-0 uPxdw"
             >
               <path
-                fill={textColor}
+                fill={repeating ? "red" : textColor}
                 d="M0 4.75A3.75 3.75 0 0 1 3.75 1h8.5A3.75 3.75 0 0 1 16 4.75v5a3.75 3.75 0 0 1-3.75 3.75H9.81l1.018 1.018a.75.75 0 1 1-1.06 1.06L6.939 12.75l2.829-2.828a.75.75 0 1 1 1.06 1.06L9.811 12h2.439a2.25 2.25 0 0 0 2.25-2.25v-5a2.25 2.25 0 0 0-2.25-2.25h-8.5A2.25 2.25 0 0 0 1.5 4.75v5A2.25 2.25 0 0 0 3.75 12H5v1.5H3.75A3.75 3.75 0 0 1 0 9.75v-5z"
               ></path>
             </svg>
           </div>
         </div>
+        {/* ProgressBar */}
         <div className="progressbar flex justify-center items-center gap-4">
-          <p>0:00</p>
-          <div className="bg-slate-100 w-full h-1 rounded-md relative ">
-            <span className="w-4 h-4 bg-red-600 absolute rounded-full bottom-[-0.4rem] left-0"></span>
-          </div>
-          <p>3:21</p>
+          <p>{time}</p>
+
+          <input
+            type="range"
+            name="progressbar"
+            min="0"
+            max="30"
+            className="bg-slate-100 w-full h-1 rounded-md relative "
+            value={progVal}
+            ref={progressBar}
+          />
+
+          <p>0:30</p>
         </div>
       </div>
       <div className="playerRight flex justify-center items-center gap-3 w-[8%] ">
@@ -142,9 +264,17 @@ export default function Player() {
             ></path>
           </svg>
         </div>
-        <div className="w-full bg-white h-1 rounded-md relative">
-          <span className="w-4 h-4 bg-red-600 absolute rounded-full bottom-[-0.4rem] left-0"></span>
-        </div>
+
+        {/* Volume setting */}
+        <input
+          type="range"
+          name="volume"
+          min={0}
+          max={100}
+          value={volume}
+          onChange={(e) => setVolume(e.target.value)}
+          className="w-full"
+        />
       </div>
     </div>
   );
