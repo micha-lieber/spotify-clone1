@@ -8,11 +8,18 @@ import React, {
 import { ThemeContext } from "../context/ThemeContext";
 
 export default function Player() {
-  const { textColor, song, playing, setPlaying, setLiked } =
-    useContext(ThemeContext);
+  const {
+    textColor,
+    song,
+    playing,
+    setPlaying,
+    setLiked,
+    liked,
+    heartColor,
+    setHeartColor,
+  } = useContext(ThemeContext);
   const [time, setTime] = useState("0:00");
   const [progVal, setProgVal] = useState(0);
-  const [heartColor, setHeartColor] = useState(null);
   const [volume, setVolume] = useState(60);
   const [repeating, setRepeating] = useState(false);
   const audplayer = useRef(0);
@@ -56,7 +63,7 @@ export default function Player() {
   const likeHandler = (e) => {
     if (heartColor) {
       setHeartColor(null);
-    } else {
+    } else if (liked.filter((track) => track.id === song.id).length < 1) {
       setHeartColor("red");
       setLiked((prevLiked) => [...prevLiked, song]);
       console.log("song liked");
@@ -75,7 +82,7 @@ export default function Player() {
   };
 
   return (
-    <div className="h-[10%] bg-slate-800 flex justify-between p-10 ">
+    <div className="h-[10%] w-full bg-slate-800 flex justify-between fixed bottom-0 sm:p-10 sm:static">
       {/* audio element */}
       <audio
         src={song?.preview}
@@ -87,10 +94,10 @@ export default function Player() {
       ></audio>
 
       {/* player left elements */}
-      <div className="playerLeft flex justify-center items-center gap-5">
+      <div className="playerLeft flex justify-center w-1/4 items-center gap-2 md:gap-5">
         {/* album cover */}
-        <div>
-          <img src={song?.album.cover_small} alt="" />
+        <div className={`hidden sm:inline`}>
+          <img src={song?.album.cover_small} alt={song?.title} />
         </div>
         {/* title and artistname */}
         <div className="titleAndArtist">
@@ -248,7 +255,7 @@ export default function Player() {
           <p>0:30</p>
         </div>
       </div>
-      <div className="playerRight flex justify-center items-center gap-3 w-[8%] ">
+      <div className="playerRight flex justify-end items-center gap-1 w-[15%] lg:gap-3 lg:w-[8%]">
         <div>
           <svg
             height="16"

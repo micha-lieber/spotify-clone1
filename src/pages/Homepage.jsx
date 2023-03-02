@@ -5,7 +5,9 @@ import { AuthContext } from "../context/authContext";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { spotifyFirestore } from "../firebase/config";
 import CardContent from "../components/CardContent";
+
 export const headingStyle = "text-3xl my-5";
+export const containerStyle = "flex justify-center gap-3 p-2 flex-wrap";
 
 export default function Homepage() {
   const {
@@ -47,10 +49,9 @@ export default function Homepage() {
       console.log("Authcontext:No user Found");
       return;
     } else if (lastPlayed.length < 1) {
-      console.log("lastplayed is not empty");
       getUserData();
     } else {
-      console.log("something went very wrong");
+      console.log("Authcontext:Error getting userdata");
       return;
     }
   }, [user]);
@@ -87,13 +88,13 @@ export default function Homepage() {
         </>
       )}
       <h2 className={`${headingStyle}`}>Recommended albums</h2>
-      <div className="flex justify-center gap-3 p-2 flex-wrap">
+      <div className={`${containerStyle}`}>
         {albumIdArr.map((album) => (
           <Card endpoint="album" id={album} key={album} />
         ))}
       </div>
       <h2 className={`${headingStyle}`}>Recommended playlists</h2>
-      <div className="flex justify-center gap-3 p-2">
+      <div className={`${containerStyle}`}>
         {playlistsArr.map((playlist) => (
           <Card endpoint="playlist" id={playlist} key={playlist} />
         ))}

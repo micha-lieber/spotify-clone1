@@ -2,6 +2,8 @@ import React, { useContext } from "react";
 import CardContent from "../components/CardContent";
 import { ThemeContext } from "../context/ThemeContext";
 import { headingStyle } from "./Homepage";
+import { containerStyle } from "./Homepage";
+
 export default function LikePage() {
   const { liked } = useContext(ThemeContext);
 
@@ -15,7 +17,7 @@ export default function LikePage() {
       >
         Songs you enjoyed, apparently.
       </h1>
-      <div className="flex justify-center gap-3 p-2 flex-wrap">
+      <div className={`${containerStyle}`}>
         {liked.reverse().map((track) => (
           <CardContent data={track} key={Math.random() * 1000000} />
         ))}

@@ -40,7 +40,7 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className={`${flex} w-full h-full`}>
+    <div className={`${flex} w-full sm:h-full my-20 sm:my-0`}>
       <h1 className={`text-2xl font-bold`}>
         Sign up now to listen to everything, all at once!
       </h1>

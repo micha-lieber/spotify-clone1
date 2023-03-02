@@ -6,7 +6,6 @@ export default function CardContent({ data }) {
 
   /**updates song to the one clicked, adds song to lastPlayed array */
   const cardClickHandler = () => {
-    console.log("data onClick:", data);
     if (data.type === "track") {
       console.log("its a track");
       setPlaying(false);
@@ -24,11 +23,11 @@ export default function CardContent({ data }) {
     <div>
       {data && !data.error && (
         <div
-          class="w-52 rounded-md overflow-hidden shadow-lg"
+          className="w-52 rounded-md overflow-hidden shadow-slate-800 shadow-lg hover:text-white"
           onClick={() => cardClickHandler()}
         >
           <img
-            class="w-full"
+            className="w-full"
             src={
               data.cover_medium
                 ? data.cover_medium
@@ -38,8 +37,8 @@ export default function CardContent({ data }) {
             }
             alt={data.title}
           />
-          <div class="px-6 py-4">
-            <p class="font-bold text-xl mb-2">{data.title}</p>
+          <div className="px-6 py-4">
+            <p className="font-bold text-xl mb-2">{data.title}</p>
             <p>{data.artist?.name}</p>
           </div>
         </div>

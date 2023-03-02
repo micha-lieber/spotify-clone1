@@ -17,9 +17,9 @@ function App() {
   return (
     <BrowserRouter>
       <div className="App">
-        <div className={`flex ${user ? "h-[90%]" : "h-full"} `}>
+        <div className={`sm:flex ${user ? "sm:h-[90%]" : "sm:h-full"} h-full`}>
           <Navbar />
-          <div className="w-[90%] h-full">
+          <div className="sm:w-[90%] sm:h-full h-full">
             <Userbar />
             <div className="w-full h-[94%] bg-slate-900 overflow-scroll">
               <Routes>

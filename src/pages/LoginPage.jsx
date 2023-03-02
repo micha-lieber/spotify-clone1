@@ -30,7 +30,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className={`${flex} w-full h-full`}>
+    <div className={`${flex} w-full sm:h-full my-20 sm:my-0`}>
       <h1 className={`text-2xl font-bold`}>Log in with your Credentials</h1>
       <form onSubmit={(e) => submitHandler(e)} className={`${flex}`}>
         <input

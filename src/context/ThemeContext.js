@@ -13,7 +13,7 @@ export const ThemeProvider = ({ children }) => {
   const [lastPlayed, setLastPlayed] = useState([]);
   const [userdata, setUserdata] = useState(null);
   const [docId, setDocId] = useState(null);
-
+  const [heartColor, setHeartColor] = useState(null);
   // Ids from spotify!
   const artistsIdArr = [
     "63kndWSdNb6eLYN4OdaJRb",
@@ -60,6 +60,8 @@ export const ThemeProvider = ({ children }) => {
         setLiked,
         docId,
         setDocId,
+        heartColor,
+        setHeartColor,
       }}
     >
       {children}

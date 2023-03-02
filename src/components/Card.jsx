@@ -1,5 +1,4 @@
-import React, { useContext } from "react";
-import { ThemeContext } from "../context/ThemeContext";
+import React from "react";
 import { useFetch } from "../hooks/useFetch";
 import CardContent from "./CardContent";
 

@@ -30,7 +30,7 @@ export default function Userbar() {
   };
 
   return (
-    <div className="w-full h-[6%] bg-slate-800 flex justify-end gap-4 p-2">
+    <div className="w-full sm:h-[6%] bg-slate-800 flex justify-end sm:justify-start gap-4 p-2 lg:justify-end ">
       <NavLink
         to={`${user ? "/" : "/signup"}`}
         className={`${buttons}`}
@@ -46,7 +46,7 @@ export default function Userbar() {
         </NavLink>
       )}
       <button
-        className={`${buttons}`}
+        className={`${buttons} lg:mr-[200px]`}
         onClick={(e) => {
           signoutHandler(e);
         }}
